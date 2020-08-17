@@ -12,6 +12,9 @@ public class CharacterDetailsController : MonoBehaviour
     public List<Text> funFactTexts;
     public GameObject genrePanel;
     public Text characterNameText;
+    public Text generationCountText;
+    public Text yearCountText;
+    public Text yearFunFactText;
 
     public Image frontHair;
     public Image eyes;
@@ -26,10 +29,16 @@ public class CharacterDetailsController : MonoBehaviour
     void Start()
     {
         genrePanel.SetActive(false);
+        yearCountText.gameObject.SetActive(false);
+        yearFunFactText.gameObject.SetActive(false);
         if (GameManager.Instance.playerDetails.genre == null)
         {
             genrePanel.SetActive(true);
             GameObject.Find("Canvas/GenrePanel/ValidateGenreButton").SetActive(false);
+        }
+        else
+        {
+            LoadPlayerDetailsData();
         }
 
         var ffData = Resources.Load<TextAsset>("FunFactsData");
@@ -37,6 +46,11 @@ public class CharacterDetailsController : MonoBehaviour
 
         var nData = Resources.Load<TextAsset>("NamesData");
         namesData = JsonUtility.FromJson<Names>(nData.text);
+    }
+
+    private void LoadPlayerDetailsData()
+    {
+        print("Need to load data"); // TODO LOAD DATA PLAYER DETAILS
     }
 
     public void OnClickReadyButton()
@@ -57,43 +71,59 @@ public class CharacterDetailsController : MonoBehaviour
         return randomAction + " " + randomSubject + " " + randomCompletion + " " + randomVenue;
     }
 
+    void ApplyTextureOnImage(Texture2D texture, ref Image img)
+    {
+        img.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
+        img.SetNativeSize();
+    }
+
+    System.Tuple<Texture2D, string> ApplyRandomTextureByPath(ref Texture2D texture, string path)
+    {
+        var fileInfo = new DirectoryInfo(Application.streamingAssetsPath + "/" + path);
+        var files = fileInfo.GetFiles("*png");
+        var index = Random.Range(0, files.Length);
+        var filePath = files[index].FullName;
+        var randomFile = System.IO.File.ReadAllBytes(filePath);
+        texture.LoadImage(randomFile);
+        return System.Tuple.Create(texture, filePath);
+    }
+
     void GetRandomCharacter()
     {
         var characterGenre = GameManager.Instance.playerDetails.genre;
         Texture2D clotheTex = new Texture2D(2, 2);
-        clotheTex.LoadImage(GetRandomFileByPath("Human_Parts/" + characterGenre + "/Clothes"));
-        clothes.sprite = Sprite.Create(clotheTex, new Rect(0, 0, clotheTex.width, clotheTex.height), new Vector2(0.5f, 0.5f), 100f);
-        clothes.SetNativeSize();
+        string clotheTextureFilePath = ApplyRandomTextureByPath(ref clotheTex, "Human_Parts/" + characterGenre + "/Clothes").Item2;
+        ApplyTextureOnImage(clotheTex, ref clothes);
 
         Texture2D eyesTex = new Texture2D(2, 2);
-        eyesTex.LoadImage(GetRandomFileByPath("Human_Parts/" + characterGenre + "/Eyes"));
-        eyes.sprite = Sprite.Create(eyesTex, new Rect(0, 0, eyesTex.width, eyesTex.height), new Vector2(0.5f, 0.5f), 100f);
-        eyes.SetNativeSize();
+        string eyesTextureFilePath = ApplyRandomTextureByPath(ref eyesTex, "Human_Parts/" + characterGenre + "/Eyes").Item2;
+        ApplyTextureOnImage(eyesTex, ref eyes);
 
         Texture2D faceTex = new Texture2D(2, 2);
-        faceTex.LoadImage(GetRandomFileByPath("Human_Parts/" + characterGenre + "/Faces"));
-        face.sprite = Sprite.Create(faceTex, new Rect(0, 0, faceTex.width, faceTex.height), new Vector2(0.5f, 0.5f), 100f);
-        face.SetNativeSize();
+        string faceTextureFilePath = ApplyRandomTextureByPath(ref faceTex, "Human_Parts/" + characterGenre + "/Faces").Item2;
+        ApplyTextureOnImage(faceTex, ref face);
 
         Texture2D hairBackTex = new Texture2D(2, 2);
-        hairBackTex.LoadImage(GetRandomFileByPath("Human_Parts/" + characterGenre + "/HairBack"));
-        backHair.sprite = Sprite.Create(hairBackTex, new Rect(0, 0, hairBackTex.width, hairBackTex.height), new Vector2(0.5f, 0.5f), 100f);
-        backHair.SetNativeSize();
+        string hairBackTextureFilePath = ApplyRandomTextureByPath(ref hairBackTex, "Human_Parts/" + characterGenre + "/HairBack").Item2;
+        ApplyTextureOnImage(hairBackTex, ref backHair);
 
         Texture2D hairFrontTex = new Texture2D(2, 2);
-        hairFrontTex.LoadImage(GetRandomFileByPath("Human_Parts/" + characterGenre + "/HairFront"));
-        frontHair.sprite = Sprite.Create(hairFrontTex, new Rect(0, 0, hairFrontTex.width, hairFrontTex.height), new Vector2(0.5f, 0.5f), 100f);
-        frontHair.SetNativeSize();
-
+        string hairFrontTextureFilePath = ApplyRandomTextureByPath(ref hairFrontTex, "Human_Parts/" + characterGenre + "/HairFront").Item2;
+        ApplyTextureOnImage(hairFrontTex, ref frontHair);
 
         Texture2D skinTex = new Texture2D(2, 2);
-        skinTex.LoadImage(GetRandomFileByPath("Human_Parts/neutral/skin"));
-        skin.sprite = Sprite.Create(skinTex, new Rect(0, 0, skinTex.width, skinTex.height), new Vector2(0.5f, 0.5f), 100f);
-        skin.SetNativeSize();
+        string skinTextureFilePath = ApplyRandomTextureByPath(ref skinTex, "Human_Parts/neutral/skin").Item2;
+        ApplyTextureOnImage(skinTex, ref skin);
 
         GameManager.Instance.playerDetails.name = GetRandomName();
         characterNameText.text = GameManager.Instance.playerDetails.name;
 
+        GameManager.Instance.playerDetails.clothes = clotheTextureFilePath;
+        GameManager.Instance.playerDetails.eyes = eyesTextureFilePath;
+        GameManager.Instance.playerDetails.face = faceTextureFilePath;
+        GameManager.Instance.playerDetails.hairBack = hairBackTextureFilePath;
+        GameManager.Instance.playerDetails.hairFront = hairFrontTextureFilePath;
+        GameManager.Instance.playerDetails.skin = skinTextureFilePath;
 
         for (int i = 0; i < funFactTexts.Capacity; i++)
         {
@@ -114,15 +144,6 @@ public class CharacterDetailsController : MonoBehaviour
             namesByGenre = namesData.female;
         }
         return namesByGenre[Random.Range(0, namesByGenre.Capacity)];
-    }
-
-    byte[] GetRandomFileByPath(string path)
-    {
-        var fileInfo = new System.IO.DirectoryInfo(Application.streamingAssetsPath + "/" + path);
-        var files = fileInfo.GetFiles("*png");
-        var index = Random.Range(0, files.Length);
-        var url = files[index].FullName;
-        return System.IO.File.ReadAllBytes(url);
     }
 
     public void SetGenre(string genre)
@@ -146,7 +167,7 @@ public class CharacterDetailsController : MonoBehaviour
 
     public async void OnValidateGenreButtonClick()
     {
-        //genrePanel.SetActive(false);
+        genrePanel.SetActive(false);
         GetRandomCharacter();
     }
 }

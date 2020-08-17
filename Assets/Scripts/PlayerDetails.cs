@@ -8,5 +8,6 @@
     public string face;
     public string hairFront;
     public string clothes;
-    public string yearCountSurvive;
+    public int yearCountSurvive;
+    public int generationCountSurvive;
 }
