@@ -61,60 +61,45 @@ public class CharacterDetailsController : MonoBehaviour
     {
         var characterGenre = GameManager.Instance.playerDetails.genre;
         Texture2D clotheTex = new Texture2D(2,2);
-        //GetRandomFileByPath("Human_Parts/" + characterGenre + "/Clothes").Current.text.LoadImageIntoTexture(clotheTex);
-        //clothes.sprite = Sprite.Create(clotheTex, new Rect(0, 0, clotheTex.width, clotheTex.height), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
-        //clothes.SetNativeSize();
+        clotheTex.LoadImage(GetRandomFileByPath("Human_Parts/" + characterGenre + "/Clothes"));
+        clothes.sprite = Sprite.Create(clotheTex, new Rect(0, 0, clotheTex.width, clotheTex.height), new Vector2(0.5f, 0.5f), 100f);
+        clothes.SetNativeSize();
 
-        //Texture2D eyesTex = new Texture2D(2, 2);
-        //GetRandomFileByPath("Human_Parts/" + characterGenre + "/Eyes").Current.LoadImageIntoTexture(eyesTex);
-        //eyes.sprite = Sprite.Create(eyesTex, new Rect(0, 0, eyesTex.width, eyesTex.height), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
-        //eyes.SetNativeSize();
+        Texture2D eyesTex = new Texture2D(2, 2);
+        eyesTex.LoadImage(GetRandomFileByPath("Human_Parts/" + characterGenre + "/Eyes"));
+        eyes.sprite = Sprite.Create(eyesTex, new Rect(0, 0, eyesTex.width, eyesTex.height), new Vector2(0.5f, 0.5f), 100f);
+        eyes.SetNativeSize();
 
-        //Texture2D faceTex = new Texture2D(2, 2);
-        //GetRandomFileByPath("Human_Parts/" + characterGenre + "/Faces").Current.LoadImageIntoTexture(faceTex);
-        //face.sprite = Sprite.Create(faceTex, new Rect(0, 0, faceTex.width, faceTex.height), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
-        //face.SetNativeSize();
+        Texture2D faceTex = new Texture2D(2, 2);
+        faceTex.LoadImage(GetRandomFileByPath("Human_Parts/" + characterGenre + "/Faces"));
+        face.sprite = Sprite.Create(faceTex, new Rect(0, 0, faceTex.width, faceTex.height), new Vector2(0.5f, 0.5f), 100f);
+        face.SetNativeSize();
 
-        //Texture2D hairBackTex = new Texture2D(2, 2);
-        //GetRandomFileByPath("Human_Parts/" + characterGenre + "/HairBack").Current.LoadImageIntoTexture(hairBackTex);
-        //backHair.sprite = Sprite.Create(hairBackTex, new Rect(0, 0, hairBackTex.width, hairBackTex.height), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
-        //backHair.SetNativeSize();
+        Texture2D hairBackTex = new Texture2D(2, 2);
+        hairBackTex.LoadImage(GetRandomFileByPath("Human_Parts/" + characterGenre + "/HairBack"));
+        backHair.sprite = Sprite.Create(hairBackTex, new Rect(0, 0, hairBackTex.width, hairBackTex.height), new Vector2(0.5f, 0.5f), 100f);
+        backHair.SetNativeSize();
 
-        //Texture2D hairFrontTex = new Texture2D(2, 2);
-        //GetRandomFileByPath("Human_Parts/" + characterGenre + "/HairFront").Current.LoadImageIntoTexture(hairFrontTex);
-        //frontHair.sprite = Sprite.Create(hairFrontTex, new Rect(0, 0, hairFrontTex.width, hairFrontTex.height), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
-        //frontHair.SetNativeSize();
+        Texture2D hairFrontTex = new Texture2D(2, 2);
+        hairFrontTex.LoadImage(GetRandomFileByPath("Human_Parts/" + characterGenre + "/HairFront"));
+        frontHair.sprite = Sprite.Create(hairFrontTex, new Rect(0, 0, hairFrontTex.width, hairFrontTex.height), new Vector2(0.5f, 0.5f), 100f);
+        frontHair.SetNativeSize();
 
-        Texture2D skinTex = new Texture2D(50, 50);
-        StartCoroutine(GetRandomFileByPath("Human_Parts/neutral/skin", (byte[] imgBytes) => {
-            print(imgBytes.Length);
-            skinTex.LoadRawTextureData(imgBytes);
-            skinTex.Apply();
-            skin.sprite = Sprite.Create(skinTex, new Rect(0, 0, skinTex.width, skinTex.height), new Vector2(0.5f, 0.5f), 100f);
-            skin.SetNativeSize();
-        }));
+
+        Texture2D skinTex = new Texture2D(2, 2);
+        skinTex.LoadImage(GetRandomFileByPath("Human_Parts/neutral/skin"));
+        skin.sprite = Sprite.Create(skinTex, new Rect(0, 0, skinTex.width, skinTex.height), new Vector2(0.5f, 0.5f), 100f);
+        skin.SetNativeSize();
         
     }
 
-    IEnumerator GetRandomFileByPath(string path, System.Action<byte[]> callback)
+    byte[] GetRandomFileByPath(string path)
     {
         var fileInfo = new System.IO.DirectoryInfo(Application.streamingAssetsPath +"/"+ path);
-        var files = fileInfo.GetFiles();
+        var files = fileInfo.GetFiles("*png");
         var index = Random.Range(0, files.Length);
         var url = files[index].FullName;
-        byte[] imgData;
-        //Check if we should use UnityWebRequest or File.ReadAllBytes
-        if (url.Contains("://") || url.Contains(":///"))
-        {
-            UnityWebRequest www = UnityWebRequest.Get(url);
-            yield return www.SendWebRequest();
-            imgData = www.downloadHandler.data;
-        }
-        else
-        {
-            imgData = System.IO.File.ReadAllBytes(url);
-        }
-        callback(imgData);
+        return System.IO.File.ReadAllBytes(url);
     }
 
     public void SetGenre(string genre)
@@ -138,7 +123,7 @@ public class CharacterDetailsController : MonoBehaviour
 
     public async void OnValidateGenreButtonClick()
     {
-        //genrePanel.SetActive(false);
+        genrePanel.SetActive(false);
         GetRandomCharacter();
     }
 }
