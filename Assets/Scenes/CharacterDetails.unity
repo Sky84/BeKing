@@ -761,6 +761,7 @@ MonoBehaviour:
   - {fileID: 884980249}
   - {fileID: 844589079}
   genrePanel: {fileID: 36970309}
+  characterNameText: {fileID: 1868805145}
   frontHair: {fileID: 1723942480}
   eyes: {fileID: 2104631617}
   face: {fileID: 206190437}

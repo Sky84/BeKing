@@ -11,6 +11,7 @@ public class CharacterDetailsController : MonoBehaviour
 {
     public List<Text> funFactTexts;
     public GameObject genrePanel;
+    public Text characterNameText;
 
     public Image frontHair;
     public Image eyes;
@@ -19,7 +20,8 @@ public class CharacterDetailsController : MonoBehaviour
     public Image skin;
     public Image backHair;
 
-    private FunFacts funFacts;
+    private FunFacts funFactsData;
+    private Names namesData;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,12 +33,10 @@ public class CharacterDetailsController : MonoBehaviour
         }
 
         var ffData = Resources.Load<TextAsset>("FunFactsData");
-        funFacts = JsonUtility.FromJson<FunFacts>(ffData.text);
-        for (int i = 0; i < funFactTexts.Capacity; i++)
-        {
-            Text text = funFactTexts[i];
-            text.text = GetFunFact();
-        }
+        funFactsData = JsonUtility.FromJson<FunFacts>(ffData.text);
+
+        var nData = Resources.Load<TextAsset>("NamesData");
+        namesData = JsonUtility.FromJson<Names>(nData.text);
     }
 
     public void OnClickReadyButton()
@@ -49,10 +49,10 @@ public class CharacterDetailsController : MonoBehaviour
 
     string GetFunFact()
     {
-        var randomAction = funFacts.action[Random.Range(0, funFacts.action.Capacity)];
-        var randomSubject = funFacts.subject[Random.Range(0, funFacts.subject.Capacity)];
-        var randomCompletion = funFacts.completion[Random.Range(0, funFacts.completion.Capacity)];
-        var randomVenue = funFacts.venue[Random.Range(0, funFacts.venue.Capacity)];
+        var randomAction = funFactsData.action[Random.Range(0, funFactsData.action.Capacity)];
+        var randomSubject = funFactsData.subject[Random.Range(0, funFactsData.subject.Capacity)];
+        var randomCompletion = funFactsData.completion[Random.Range(0, funFactsData.completion.Capacity)];
+        var randomVenue = funFactsData.venue[Random.Range(0, funFactsData.venue.Capacity)];
 
         return randomAction + " " + randomSubject + " " + randomCompletion + " " + randomVenue;
     }
@@ -60,7 +60,7 @@ public class CharacterDetailsController : MonoBehaviour
     void GetRandomCharacter()
     {
         var characterGenre = GameManager.Instance.playerDetails.genre;
-        Texture2D clotheTex = new Texture2D(2,2);
+        Texture2D clotheTex = new Texture2D(2, 2);
         clotheTex.LoadImage(GetRandomFileByPath("Human_Parts/" + characterGenre + "/Clothes"));
         clothes.sprite = Sprite.Create(clotheTex, new Rect(0, 0, clotheTex.width, clotheTex.height), new Vector2(0.5f, 0.5f), 100f);
         clothes.SetNativeSize();
@@ -90,12 +90,35 @@ public class CharacterDetailsController : MonoBehaviour
         skinTex.LoadImage(GetRandomFileByPath("Human_Parts/neutral/skin"));
         skin.sprite = Sprite.Create(skinTex, new Rect(0, 0, skinTex.width, skinTex.height), new Vector2(0.5f, 0.5f), 100f);
         skin.SetNativeSize();
-        
+
+        GameManager.Instance.playerDetails.name = GetRandomName();
+        characterNameText.text = GameManager.Instance.playerDetails.name;
+
+
+        for (int i = 0; i < funFactTexts.Capacity; i++)
+        {
+            Text text = funFactTexts[i];
+            text.text = GetFunFact();
+        }
+    }
+
+    string GetRandomName()
+    {
+        var namesByGenre = new List<string>();
+        if (GameManager.Instance.playerDetails.genre == "male")
+        {
+            namesByGenre = namesData.male;
+        }
+        else
+        {
+            namesByGenre = namesData.female;
+        }
+        return namesByGenre[Random.Range(0, namesByGenre.Capacity)];
     }
 
     byte[] GetRandomFileByPath(string path)
     {
-        var fileInfo = new System.IO.DirectoryInfo(Application.streamingAssetsPath +"/"+ path);
+        var fileInfo = new System.IO.DirectoryInfo(Application.streamingAssetsPath + "/" + path);
         var files = fileInfo.GetFiles("*png");
         var index = Random.Range(0, files.Length);
         var url = files[index].FullName;
@@ -123,7 +146,7 @@ public class CharacterDetailsController : MonoBehaviour
 
     public async void OnValidateGenreButtonClick()
     {
-        genrePanel.SetActive(false);
+        //genrePanel.SetActive(false);
         GetRandomCharacter();
     }
 }
