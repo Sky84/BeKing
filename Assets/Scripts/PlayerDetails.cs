@@ -10,4 +10,7 @@
     public string clothes;
     public int yearCountSurvive;
     public int generationCountSurvive;
+    public int food;
+    public int work;
+    public int sleep;
 }

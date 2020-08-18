@@ -57,7 +57,7 @@ public class CharacterDetailsController : MonoBehaviour
     {
         if (GameManager.Instance.playerDetails.genre != null)
         {
-            GameManager.Instance.LoadScene(ChildScenes.MainGame);
+            GameManager.Instance.LoadScene(ChildScenes.SpamGame);
         }
     }
 
@@ -165,7 +165,7 @@ public class CharacterDetailsController : MonoBehaviour
         GameObject.Find("Canvas/GenrePanel/ValidateGenreButton").SetActive(true);
     }
 
-    public async void OnValidateGenreButtonClick()
+    public void OnValidateGenreButtonClick()
     {
         genrePanel.SetActive(false);
         GetRandomCharacter();

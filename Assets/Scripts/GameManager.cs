@@ -9,7 +9,7 @@ public enum ChildScenes
     Menu = 1,
     Options = 2,
     CharacterDetails = 3,
-    MainGame = 4,
+    SpamGame = 4,
 }
 
 public class GameManager : MonoBehaviour
