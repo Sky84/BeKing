@@ -15,10 +15,14 @@ public class SpamGameController : MonoBehaviour
     public Image foodBar;
     public Image workBar;
     public Image sleepBar;
+    public Image timerImage;
+    public float timerGameToFinish;
 
-    private const int SLEEP_INCREMENT = 1;
-    private const int FOOD_INCREMENT = 1;
-    private const int WORK_INCREMENT = 1;
+    private float timeRemaining;
+
+    private const int SLEEP_INCREMENT = 5;
+    private const int FOOD_INCREMENT = 5;
+    private const int WORK_INCREMENT = 5;
 
     private const int COMMON_DECREMENT = 1;
     private const int COMMON_HIGH_DECREMENT = 2;
@@ -30,13 +34,20 @@ public class SpamGameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        timeRemaining = timerGameToFinish;
+        StartCoroutine(ExampleCoroutine());
     }
 
-    // Update is called once per frame
-    void Update()
+    IEnumerator ExampleCoroutine()
     {
-
+        UpdateTimer();
+        yield return new WaitForSeconds(0.1f);
+        timeRemaining -= timeRemaining < 0f ? 0f : 0.1f;
+        StartCoroutine(ExampleCoroutine());
+        if (timeRemaining < 0f)
+        {
+            GameManager.Instance.LoadScene(ChildScenes.CharacterSituation);
+        }
     }
 
     public void OnSpamButtonClick(int _type)
@@ -71,5 +82,10 @@ public class SpamGameController : MonoBehaviour
         foodBar.fillAmount = food / 100f;
         workBar.fillAmount = work / 100f;
         sleepBar.fillAmount = sleep / 100f;
+    }
+
+    private void UpdateTimer()
+    {
+        timerImage.fillAmount = timeRemaining / timerGameToFinish;
     }
 }

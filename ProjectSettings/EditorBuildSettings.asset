@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SpamGame.unity
     guid: cd9866d46f9adfd44953779a8a9c02f2
+  - enabled: 1
+    path: Assets/Scenes/CharacterSituation.unity
+    guid: 9dfcb519019fb074e9a4b95468c09c5e
   m_configObjects: {}
