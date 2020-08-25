@@ -34,7 +34,7 @@ public class SpamGameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        timeRemaining = timerGameToFinish;
+        timeRemaining = 0f;
         StartCoroutine(ExampleCoroutine());
     }
 
@@ -42,9 +42,9 @@ public class SpamGameController : MonoBehaviour
     {
         UpdateTimer();
         yield return new WaitForSeconds(0.1f);
-        timeRemaining -= timeRemaining < 0f ? 0f : 0.1f;
+        timeRemaining += timeRemaining > timerGameToFinish ? 0f : 0.1f;
         StartCoroutine(ExampleCoroutine());
-        if (timeRemaining < 0f)
+        if (timeRemaining > timerGameToFinish)
         {
             GameManager.Instance.LoadScene(ChildScenes.CharacterSituation);
         }

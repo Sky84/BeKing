@@ -124,6 +124,7 @@ public class CharacterDetailsController : MonoBehaviour
         GameManager.Instance.playerDetails.hairBack = hairBackTextureFilePath;
         GameManager.Instance.playerDetails.hairFront = hairFrontTextureFilePath;
         GameManager.Instance.playerDetails.skin = skinTextureFilePath;
+        GameManager.Instance.playerDetails.situtation = PlayerDetails.Situtation.HOMELESS_LOW;
 
         for (int i = 0; i < funFactTexts.Capacity; i++)
         {
