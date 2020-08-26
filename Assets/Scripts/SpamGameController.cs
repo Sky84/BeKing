@@ -27,15 +27,23 @@ public class SpamGameController : MonoBehaviour
     private const int COMMON_DECREMENT = 1;
     private const int COMMON_HIGH_DECREMENT = 2;
 
-    private int food;
-    private int work;
-    private int sleep;
+    private float food;
+    private float work;
+    private float sleep;
 
     // Start is called before the first frame update
     void Start()
     {
         timeRemaining = 0f;
         StartCoroutine(ExampleCoroutine());
+    }
+
+    void FixedUpdate()
+    {
+        food -= 0.1f;
+        work -= 0.1f;
+        sleep -= 0.1f;
+        UpdateBars();
     }
 
     IEnumerator ExampleCoroutine()
@@ -74,7 +82,6 @@ public class SpamGameController : MonoBehaviour
                 Debug.Log(type + ": type unknow");
                 break;
         }
-        UpdateBars();
     }
 
     private void UpdateBars()

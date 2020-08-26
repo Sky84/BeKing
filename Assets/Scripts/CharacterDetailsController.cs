@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using UnityEngine.Windows;
 
 public class CharacterDetailsController : MonoBehaviour
 {
