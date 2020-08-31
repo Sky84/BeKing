@@ -235,6 +235,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   imageSituation: {fileID: 1744015903}
+  secondsBeforeLoadnextStep: 3
 --- !u!1 &824851033
 GameObject:
   m_ObjectHideFlags: 0

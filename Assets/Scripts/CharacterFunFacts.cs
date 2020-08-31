@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FunFacts
+public class CharacterFunFacts
 {
     public List<string> action;
     public List<string> subject;

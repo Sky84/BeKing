@@ -35,23 +35,32 @@ public class SpamGameController : MonoBehaviour
     void Start()
     {
         timeRemaining = 0f;
-        StartCoroutine(ExampleCoroutine());
+        StartCoroutine(TimerTick());
     }
 
     void FixedUpdate()
     {
-        food -= 0.1f;
-        work -= 0.1f;
-        sleep -= 0.1f;
+        SubstractValueBar(ref food, .1f);
+        SubstractValueBar(ref work, .1f);
+        SubstractValueBar(ref sleep, .1f);
         UpdateBars();
     }
 
-    IEnumerator ExampleCoroutine()
+    void SubstractValueBar(ref float valueBar, float valueToSubstract)
+    {
+        valueBar -= valueToSubstract;
+        if (valueBar <= 0 && !GameManager.Instance.playerIsDead)
+        {
+            GameManager.Instance.Loose();
+        }
+    }
+
+    IEnumerator TimerTick()
     {
         UpdateTimer();
         yield return new WaitForSeconds(0.1f);
         timeRemaining += timeRemaining > timerGameToFinish ? 0f : 0.1f;
-        StartCoroutine(ExampleCoroutine());
+        StartCoroutine(TimerTick());
         if (timeRemaining > timerGameToFinish)
         {
             GameManager.Instance.LoadScene(ChildScenes.CharacterSituation);

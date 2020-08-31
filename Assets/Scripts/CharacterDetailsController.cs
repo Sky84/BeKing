@@ -22,8 +22,6 @@ public class CharacterDetailsController : MonoBehaviour
     public Image skin;
     public Image backHair;
 
-    private FunFacts funFactsData;
-    private Names namesData;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,22 +32,32 @@ public class CharacterDetailsController : MonoBehaviour
         {
             genrePanel.SetActive(true);
             GameObject.Find("Canvas/GenrePanel/ValidateGenreButton").SetActive(false);
+            GameManager.Instance.playerDetails.generationCountSurvive = 1;
         }
         else
         {
             LoadPlayerDetailsData();
         }
 
-        var ffData = Resources.Load<TextAsset>("FunFactsData");
-        funFactsData = JsonUtility.FromJson<FunFacts>(ffData.text);
+        if (GameManager.Instance.funFactsData == null)
+        {
+            var ffData = Resources.Load<TextAsset>("FunFactsData");
+            GameManager.Instance.funFactsData = JsonUtility.FromJson<CharacterFunFacts>(ffData.text);
 
-        var nData = Resources.Load<TextAsset>("NamesData");
-        namesData = JsonUtility.FromJson<Names>(nData.text);
+            var nData = Resources.Load<TextAsset>("NamesData");
+            GameManager.Instance.namesData = JsonUtility.FromJson<CharacterNames>(nData.text);
+        }
     }
 
     private void LoadPlayerDetailsData()
     {
-        print("Need to load data"); // TODO LOAD DATA PLAYER DETAILS
+        if (GameManager.Instance.playerIsDead)
+        {
+            GetRandomCharacter();
+            GameManager.Instance.playerIsDead = false;
+            return;
+        }
+        UpdateInterfaceView();
     }
 
     public void OnClickReadyButton()
@@ -62,6 +70,7 @@ public class CharacterDetailsController : MonoBehaviour
 
     string GetFunFact()
     {
+        var funFactsData = GameManager.Instance.funFactsData;
         var randomAction = funFactsData.action[Random.Range(0, funFactsData.action.Capacity)];
         var randomSubject = funFactsData.subject[Random.Range(0, funFactsData.subject.Capacity)];
         var randomCompletion = funFactsData.completion[Random.Range(0, funFactsData.completion.Capacity)];
@@ -70,7 +79,7 @@ public class CharacterDetailsController : MonoBehaviour
         return randomAction + " " + randomSubject + " " + randomCompletion + " " + randomVenue;
     }
 
-    void ApplyTextureOnImage(Texture2D texture, ref Image img)
+    void ApplyTextureOnImage(Texture2D texture, Image img)
     {
         img.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
         img.SetNativeSize();
@@ -92,30 +101,23 @@ public class CharacterDetailsController : MonoBehaviour
         var characterGenre = GameManager.Instance.playerDetails.genre;
         Texture2D clotheTex = new Texture2D(2, 2);
         string clotheTextureFilePath = ApplyRandomTextureByPath(ref clotheTex, "Human_Parts/" + characterGenre + "/Clothes").Item2;
-        ApplyTextureOnImage(clotheTex, ref clothes);
 
         Texture2D eyesTex = new Texture2D(2, 2);
         string eyesTextureFilePath = ApplyRandomTextureByPath(ref eyesTex, "Human_Parts/" + characterGenre + "/Eyes").Item2;
-        ApplyTextureOnImage(eyesTex, ref eyes);
 
         Texture2D faceTex = new Texture2D(2, 2);
         string faceTextureFilePath = ApplyRandomTextureByPath(ref faceTex, "Human_Parts/" + characterGenre + "/Faces").Item2;
-        ApplyTextureOnImage(faceTex, ref face);
 
         Texture2D hairBackTex = new Texture2D(2, 2);
         string hairBackTextureFilePath = ApplyRandomTextureByPath(ref hairBackTex, "Human_Parts/" + characterGenre + "/HairBack").Item2;
-        ApplyTextureOnImage(hairBackTex, ref backHair);
 
         Texture2D hairFrontTex = new Texture2D(2, 2);
         string hairFrontTextureFilePath = ApplyRandomTextureByPath(ref hairFrontTex, "Human_Parts/" + characterGenre + "/HairFront").Item2;
-        ApplyTextureOnImage(hairFrontTex, ref frontHair);
 
         Texture2D skinTex = new Texture2D(2, 2);
         string skinTextureFilePath = ApplyRandomTextureByPath(ref skinTex, "Human_Parts/neutral/skin").Item2;
-        ApplyTextureOnImage(skinTex, ref skin);
 
         GameManager.Instance.playerDetails.name = GetRandomName();
-        characterNameText.text = GameManager.Instance.playerDetails.name;
 
         GameManager.Instance.playerDetails.clothes = clotheTextureFilePath;
         GameManager.Instance.playerDetails.eyes = eyesTextureFilePath;
@@ -124,6 +126,30 @@ public class CharacterDetailsController : MonoBehaviour
         GameManager.Instance.playerDetails.hairFront = hairFrontTextureFilePath;
         GameManager.Instance.playerDetails.skin = skinTextureFilePath;
         GameManager.Instance.playerDetails.situtation = PlayerDetails.Situtation.HOMELESS_LOW;
+        UpdateInterfaceView();
+    }
+
+    void UpdateInterfaceView()
+    {
+        var tupleFilePathsImages = new System.Tuple<string, Image>[] {
+           System.Tuple.Create(GameManager.Instance.playerDetails.clothes, clothes),
+           System.Tuple.Create(GameManager.Instance.playerDetails.eyes, eyes),
+           System.Tuple.Create(GameManager.Instance.playerDetails.face, face),
+           System.Tuple.Create(GameManager.Instance.playerDetails.hairBack, backHair),
+           System.Tuple.Create(GameManager.Instance.playerDetails.hairFront, frontHair),
+           System.Tuple.Create(GameManager.Instance.playerDetails.skin, skin)
+        };
+
+        for (int i = 0; i < tupleFilePathsImages.Length; i++)
+        {
+            var file = System.IO.File.ReadAllBytes(tupleFilePathsImages[i].Item1);
+            var texTmp = new Texture2D(2, 2);
+            texTmp.LoadImage(file);
+            ApplyTextureOnImage(texTmp, tupleFilePathsImages[i].Item2);
+        }
+
+        characterNameText.text = GameManager.Instance.playerDetails.name;
+        generationCountText.text = "Generation " + GameManager.Instance.playerDetails.generationCountSurvive;
 
         for (int i = 0; i < funFactTexts.Capacity; i++)
         {
@@ -134,6 +160,7 @@ public class CharacterDetailsController : MonoBehaviour
 
     string GetRandomName()
     {
+        var namesData = GameManager.Instance.namesData;
         var namesByGenre = new List<string>();
         if (GameManager.Instance.playerDetails.genre == "male")
         {

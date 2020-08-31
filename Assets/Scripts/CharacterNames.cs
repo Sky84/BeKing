@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Names
+public class CharacterNames
 {
     public List<string> male;
     public List<string> female;

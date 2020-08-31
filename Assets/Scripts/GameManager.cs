@@ -17,6 +17,10 @@ public class GameManager : MonoBehaviour
 {
     public int SpamStepBeforeTrasition = 4;
     public PlayerDetails playerDetails;
+
+    public bool playerIsDead = false;
+    public CharacterFunFacts funFactsData;
+    public CharacterNames namesData;
     private static GameManager _instance;
     #region singleton
     public static GameManager Instance
@@ -60,4 +64,16 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene((int)scene);
     }
 
+    public void Loose()
+    {
+        GameManager.Instance.playerDetails.hairBack = null;
+        GameManager.Instance.playerDetails.hairFront = null;
+        GameManager.Instance.playerDetails.name = null;
+        GameManager.Instance.playerDetails.skin = null;
+        GameManager.Instance.playerDetails.situtation = PlayerDetails.Situtation.HOMELESS_LOW;
+        GameManager.Instance.playerDetails.yearCountSurvive = 0;
+        GameManager.Instance.playerDetails.generationCountSurvive++;
+        GameManager.Instance.playerIsDead = true;
+        GameManager.Instance.LoadScene(ChildScenes.CharacterDetails);
+    }
 }
