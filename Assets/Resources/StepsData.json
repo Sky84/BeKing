@@ -5,26 +5,26 @@
       "mid": "Status/homelessmid.png",
       "high": "Status/homelesshigh.png"
     },
-    "stats": [
-      {
+    "stats": {
+      "food": {
         "id": 0,
         "startValue": 46.04,
         "icon": "http://placehold.it/32x32",
         "name": "red"
       },
-      {
+      "work":{
         "id": 1,
         "startValue": 41.67,
         "icon": "http://placehold.it/32x32",
         "name": "green"
       },
-      {
+      "sleep":{
         "id": 2,
         "startValue": 63,
         "icon": "http://placehold.it/32x32",
         "name": "blue"
       }
-    ]
+    }
   },
   "peasant": {
     "situation_images_path": {

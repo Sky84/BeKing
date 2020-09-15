@@ -4,23 +4,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public enum ChildScenes
+public enum ChildScene
 {
     Menu = 1,
     Options = 2,
     CharacterDetails = 3,
     SpamGame = 4,
-    CharacterSituation = 5,
+    ThrowGame = 5,
+    CharacterSituation = 6,
 }
 
 public class GameManager : MonoBehaviour
 {
-    public int SpamStepBeforeTrasition = 4;
     public PlayerDetails playerDetails;
 
     public bool playerIsDead = false;
     public CharacterFunFacts funFactsData;
     public CharacterNames namesData;
+    public Steps stepsData;
     private static GameManager _instance;
     #region singleton
     public static GameManager Instance
@@ -50,8 +51,15 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SceneManager.LoadScene((int)ChildScenes.Menu, LoadSceneMode.Additive);
+        SceneManager.LoadScene((int)ChildScene.Menu, LoadSceneMode.Additive);
+        LoadDataJson();
         LoadSave();
+    }
+
+    private void LoadDataJson()
+    {
+        var sRaw = Resources.Load<TextAsset>("StepsData");
+        GameManager.Instance.stepsData = JsonUtility.FromJson<Steps>(sRaw.text);
     }
 
     private void LoadSave()
@@ -59,21 +67,44 @@ public class GameManager : MonoBehaviour
         GameManager.Instance.playerDetails = new PlayerDetails();
     }
 
-    public void LoadScene(ChildScenes scene)
+    public Stats GetCharacterSituationStepStats()
+    {
+        if (GameManager.Instance.playerDetails.situtation <= PlayerDetails.Situtation.HOMELESS_HIGH)
+        {
+            return GameManager.Instance.stepsData.homeless.stats;
+        }
+        else if (GameManager.Instance.playerDetails.situtation <= PlayerDetails.Situtation.PEASANT_HIGH)
+        {
+            return GameManager.Instance.stepsData.peasant.stats;
+        }
+        else if (GameManager.Instance.playerDetails.situtation <= PlayerDetails.Situtation.RICH_HIGH)
+        {
+            return GameManager.Instance.stepsData.rich.stats;
+        }
+        else if (GameManager.Instance.playerDetails.situtation <= PlayerDetails.Situtation.KING_HIGH)
+        {
+            return GameManager.Instance.stepsData.king.stats;
+        }
+        return null;
+    }
+
+    public void Win()
+    {
+        GameManager.Instance.playerDetails.situtation++;
+        LoadScene(ChildScene.CharacterSituation);
+    }
+
+    public void LoadScene(ChildScene scene)
     {
         SceneManager.LoadScene((int)scene);
     }
 
     public void Loose()
     {
-        GameManager.Instance.playerDetails.hairBack = null;
-        GameManager.Instance.playerDetails.hairFront = null;
-        GameManager.Instance.playerDetails.name = null;
-        GameManager.Instance.playerDetails.skin = null;
         GameManager.Instance.playerDetails.situtation = PlayerDetails.Situtation.HOMELESS_LOW;
         GameManager.Instance.playerDetails.yearCountSurvive = 0;
         GameManager.Instance.playerDetails.generationCountSurvive++;
         GameManager.Instance.playerIsDead = true;
-        GameManager.Instance.LoadScene(ChildScenes.CharacterDetails);
+        GameManager.Instance.LoadScene(ChildScene.CharacterDetails);
     }
 }

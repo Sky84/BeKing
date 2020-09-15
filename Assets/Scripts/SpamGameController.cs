@@ -35,7 +35,16 @@ public class SpamGameController : MonoBehaviour
     void Start()
     {
         timeRemaining = 0f;
+        SetStartValueOfCurrentSituation();
         StartCoroutine(TimerTick());
+    }
+
+    void SetStartValueOfCurrentSituation()
+    {
+        var currentSituationStepStats = GameManager.Instance.GetCharacterSituationStepStats();
+        food = currentSituationStepStats.food.startValue;
+        work = currentSituationStepStats.work.startValue;
+        sleep = currentSituationStepStats.sleep.startValue;
     }
 
     void FixedUpdate()
@@ -63,7 +72,7 @@ public class SpamGameController : MonoBehaviour
         StartCoroutine(TimerTick());
         if (timeRemaining > timerGameToFinish)
         {
-            GameManager.Instance.LoadScene(ChildScenes.CharacterSituation);
+            GameManager.Instance.Win();
         }
     }
 

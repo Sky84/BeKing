@@ -6,21 +6,19 @@ using UnityEngine.UI;
 
 public class CharacterSituationController : MonoBehaviour
 {
-    Steps stepsData;
 
     public Image imageSituation;
     public float secondsBeforeLoadnextStep;
     // Start is called before the first frame update
     void Start()
     {
-        var sRaw = Resources.Load<TextAsset>("StepsData");
-        stepsData = JsonUtility.FromJson<Steps>(sRaw.text);
         SetStatusCharacter();
         StartCoroutine(LoadNextGameStep());
     }
 
     void SetStatusCharacter()
     {
+        Steps stepsData = GameManager.Instance.stepsData;
         string currentSituation = ""; 
         switch (GameManager.Instance.playerDetails.situtation)
         {
@@ -71,6 +69,6 @@ public class CharacterSituationController : MonoBehaviour
 
     IEnumerator LoadNextGameStep(){
         yield return new WaitForSeconds(secondsBeforeLoadnextStep);
-        GameManager.Instance.LoadScene(ChildScenes.CharacterDetails);
+        GameManager.Instance.LoadScene(ChildScene.CharacterDetails);
     }
 }

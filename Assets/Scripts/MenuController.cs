@@ -14,11 +14,11 @@ public class MenuController : MonoBehaviour
 
     public void LaunchGame()
     {
-        gameManager.LoadScene(ChildScenes.CharacterDetails);
+        gameManager.LoadScene(ChildScene.CharacterDetails);
     }
 
     public void Options()
     {
-        gameManager.LoadScene(ChildScenes.Options);
+        gameManager.LoadScene(ChildScene.Options);
     }
 }

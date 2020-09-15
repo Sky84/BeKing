@@ -8,8 +8,11 @@ using UnityEngine.UI;
 
 public class CharacterDetailsController : MonoBehaviour
 {
+    public int stepsBeforeRankUp;
+    public Color characterDeadColor;
     public List<Text> funFactTexts;
     public GameObject genrePanel;
+    public GameObject crossLooseImage;
     public Text characterNameText;
     public Text generationCountText;
     public Text yearCountText;
@@ -28,6 +31,7 @@ public class CharacterDetailsController : MonoBehaviour
         genrePanel.SetActive(false);
         yearCountText.gameObject.SetActive(false);
         yearFunFactText.gameObject.SetActive(false);
+        crossLooseImage.SetActive(false);
         if (GameManager.Instance.playerDetails.genre == null)
         {
             genrePanel.SetActive(true);
@@ -49,23 +53,32 @@ public class CharacterDetailsController : MonoBehaviour
         }
     }
 
+    private void SetLooseScreen(bool active)
+    {
+        crossLooseImage.SetActive(active);
+        yearCountText.text = "Vous avez survécu " + GameManager.Instance.playerDetails.yearCountSurvive.ToString() + " ans";
+        yearFunFactText.text = "Heureusement vous n'êtes pas fils unique.";
+        yearCountText.gameObject.SetActive(active);
+        yearFunFactText.gameObject.SetActive(active);
+        generationCountText.gameObject.SetActive(!active);
+        if (active)
+        {
+            clothes.color = characterDeadColor;
+            eyes.color = characterDeadColor;
+            skin.color = characterDeadColor;
+            frontHair.color = characterDeadColor;
+            backHair.color = characterDeadColor;
+            face.color = characterDeadColor;
+        }
+    }
+
     private void LoadPlayerDetailsData()
     {
         if (GameManager.Instance.playerIsDead)
         {
-            GetRandomCharacter();
-            GameManager.Instance.playerIsDead = false;
-            return;
+            SetLooseScreen(true);
         }
-        UpdateInterfaceView();
-    }
-
-    public void OnClickReadyButton()
-    {
-        if (GameManager.Instance.playerDetails.genre != null)
-        {
-            GameManager.Instance.LoadScene(ChildScenes.SpamGame);
-        }
+        UpdateInterfaceView(!GameManager.Instance.playerIsDead);
     }
 
     string GetFunFact()
@@ -129,7 +142,7 @@ public class CharacterDetailsController : MonoBehaviour
         UpdateInterfaceView();
     }
 
-    void UpdateInterfaceView()
+    void UpdateInterfaceView(bool resetColorSkin = true)
     {
         var tupleFilePathsImages = new System.Tuple<string, Image>[] {
            System.Tuple.Create(GameManager.Instance.playerDetails.clothes, clothes),
@@ -145,6 +158,10 @@ public class CharacterDetailsController : MonoBehaviour
             var file = System.IO.File.ReadAllBytes(tupleFilePathsImages[i].Item1);
             var texTmp = new Texture2D(2, 2);
             texTmp.LoadImage(file);
+            if (resetColorSkin)
+            {
+                tupleFilePathsImages[i].Item2.color = Color.white;
+            }
             ApplyTextureOnImage(texTmp, tupleFilePathsImages[i].Item2);
         }
 
@@ -196,5 +213,28 @@ public class CharacterDetailsController : MonoBehaviour
     {
         genrePanel.SetActive(false);
         GetRandomCharacter();
+    }
+    public void OnClickReadyButton()
+    {
+        if (GameManager.Instance.playerIsDead)
+        {
+            SetLooseScreen(false);
+            GetRandomCharacter();
+            GameManager.Instance.playerIsDead = false;
+        }
+        else if (GameManager.Instance.playerDetails.genre != null)
+        {
+            var needToRankUp = (int)GameManager.Instance.playerDetails.situtation % stepsBeforeRankUp == 0;
+            ChildScene nextGameScene;
+            if (GameManager.Instance.playerDetails.situtation == 0 || !needToRankUp)
+            {
+                nextGameScene = ChildScene.SpamGame;
+            }
+            else
+            {
+                nextGameScene = ChildScene.ThrowGame;
+            }
+            GameManager.Instance.LoadScene(nextGameScene);
+        }
     }
 }

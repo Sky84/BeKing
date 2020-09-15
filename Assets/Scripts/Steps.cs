@@ -3,10 +3,10 @@
 [System.Serializable]
 public class Steps
 {
-    public Homeless homeless;
-    public Peasant peasant;
-    public Rich rich;
-    public King king;
+    public Step homeless;
+    public Step peasant;
+    public Step rich;
+    public Step king;
 }
 [System.Serializable]
 public class SituationImagesPath
@@ -19,32 +19,21 @@ public class SituationImagesPath
 public class Stat
 {
     public int id;
-    public double startValue;
+    public float startValue;
     public string icon;
     public string name;
 }
 [System.Serializable]
-public class Homeless
+public class Stats
 {
-    public SituationImagesPath situation_images_path;
-    public List<Stat> stats;
+    public Stat food;
+    public Stat work;
+    public Stat sleep;
 }
 [System.Serializable]
-public class Peasant
+public class Step
 {
     public SituationImagesPath situation_images_path;
-    public List<Stat> stats;
-}
-[System.Serializable]
-public class Rich
-{
-    public SituationImagesPath situation_images_path;
-    public List<Stat> stats;
-}
-[System.Serializable]
-public class King
-{
-    public SituationImagesPath situation_images_path;
-    public List<Stat> stats;
+    public Stats stats;
 }
 
