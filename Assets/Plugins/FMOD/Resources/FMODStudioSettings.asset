@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: FMODStudioSettings
   m_EditorClassIdentifier: 
   SwitchSettingsMigration: 1
-  HasSourceProject: 1
-  HasPlatforms: 1
+  HasSourceProject: 0
+  HasPlatforms: 0
   sourceProjectPath: ../../FMOD Studio/PBK/pbk.fspro
-  sourceBankPath: ..\..\FMOD Studio\PBK\Build
+  sourceBankPath: Assets/Audio/Bank
   SourceBankPathUnformatted: 
   AutomaticEventLoading: 1
   BankLoadType: 0
@@ -77,7 +77,7 @@ MonoBehaviour:
     Value: 32
   Plugins: []
   MasterBanks:
-  - Master
+  - Master Bank
   Banks: []
   BanksToLoad: []
   LiveUpdatePort: 9264
