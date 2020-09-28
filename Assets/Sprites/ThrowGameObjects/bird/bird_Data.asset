@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 983fbe37dd1fdbf45a86f2606e2a4c64, type: 3}
+  m_Name: bird_Data
+  m_EditorClassIdentifier: 
+  dataName: bird
+  dragonBonesJSON: {fileID: 4900000, guid: f917a3b9ac089a2469aa17ca3342309f, type: 3}
+  textureAtlas:
+  - textureAtlasJSON: {fileID: 4900000, guid: b1eb79427f0076d46906f0e08e8b8fc2, type: 3}
+    texture: {fileID: 2800000, guid: 8f00d5629abb2f840a23b68304eb845b, type: 3}
+    material: {fileID: 2100000, guid: f9ee9d6d9b963424b8e77fe430b3e506, type: 2}
+    uiMaterial: {fileID: 0}

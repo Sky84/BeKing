@@ -49,15 +49,15 @@ public class SpamGameController : MonoBehaviour
 
     void FixedUpdate()
     {
-        SubstractValueBar(ref food, .1f);
-        SubstractValueBar(ref work, .1f);
-        SubstractValueBar(ref sleep, .1f);
+        SubstractValueBar(ref food, .1f, GameManager.Instance.slowBonuses.Contains(SpamButtonType.Food));
+        SubstractValueBar(ref work, .1f, GameManager.Instance.slowBonuses.Contains(SpamButtonType.Work));
+        SubstractValueBar(ref sleep, .1f, GameManager.Instance.slowBonuses.Contains(SpamButtonType.Sleep));
         UpdateBars();
     }
 
-    void SubstractValueBar(ref float valueBar, float valueToSubstract)
+    void SubstractValueBar(ref float valueBar, float valueToSubstract, bool haveSlowBonus)
     {
-        valueBar -= valueToSubstract;
+        valueBar -= haveSlowBonus ? valueToSubstract * 0.5f : valueToSubstract;
         if (valueBar <= 0 && !GameManager.Instance.playerIsDead)
         {
             GameManager.Instance.Loose();

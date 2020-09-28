@@ -1,19 +1,45 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using static SpamGameController;
 
 public class ThrowGameController : MonoBehaviour
 {
-    public BoxCollider2D cartCollider;
-    // Start is called before the first frame update
+    public float timeBeforeSpawn;
+    private GameObject currentProjectile;
+
     void Start()
     {
-        
+        currentProjectile = GameObject.FindGameObjectWithTag("projectile");
     }
 
-    // Update is called once per frame
-    void Update()
+    IEnumerator RespawnIfPossible(GameObject nextProjectile)
     {
-        
+        if (nextProjectile)
+        {
+            yield return new WaitForSeconds(timeBeforeSpawn);
+            nextProjectile.SetActive(true);
+            currentProjectile = nextProjectile;
+        }
+    }
+    public void OnBarButtonClick(int _type)
+    {
+        var projectileCtrl = currentProjectile.GetComponent<ProjectileController>();
+        projectileCtrl.selectedBar = (SpamButtonType)_type;
+        for (int i = 0; i < projectileCtrl.throwBarButtons.Count; i++)
+        {
+            var button = projectileCtrl.throwBarButtons[i].GetComponent<Button>();
+            if (button.gameObject.name.Contains(_type.ToString()))
+            {
+                button.interactable = false;
+            }
+            else
+            {
+
+                button.interactable = true;
+            }
+        }
     }
 }

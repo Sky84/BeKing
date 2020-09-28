@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1788350708662186169}
   m_Layer: 0
   m_Name: Projectile
-  m_TagString: Untagged
+  m_TagString: projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -124,6 +124,9 @@ MonoBehaviour:
   timeBeforeSpawn: 1
   maxDistance: 1
   nextProjectile: {fileID: 0}
+  targetToWin: {fileID: 0}
+  throwGameController: {fileID: 0}
+  selectedBar: 0
   isReleased: 0
 --- !u!61 &1788350708662186168
 BoxCollider2D:

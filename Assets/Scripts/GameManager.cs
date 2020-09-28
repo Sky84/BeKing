@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static SpamGameController;
 
 public enum ChildScene
 {
@@ -17,6 +18,8 @@ public enum ChildScene
 public class GameManager : MonoBehaviour
 {
     public PlayerDetails playerDetails;
+
+    public List<SpamButtonType> slowBonuses = new List<SpamButtonType>();
 
     public bool playerIsDead = false;
     public CharacterFunFacts funFactsData;
